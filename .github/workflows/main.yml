@@ -3,32 +3,44 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: gableroux/unity3d:2018.2.21f1
+    container: gableroux/unity3d:2019.3.9f1
     steps:
         - name: Checkout Project
           uses: actions/checkout@v1
 
         - name: Decrypt the license file
-          run: openssl aes-256-cbc -d -in .github/Unity_v2018.x.ulf.enc -k ${{ secrets.UNITY_LICENSE_DECRYPT_KEY }} >> .github/Unity_v2018.x.ulf
+          run: openssl aes-256-cbc -d -in .github/Unity_v2019.x.ulf.enc -k ${{ secrets.UNITY_LICENSE_DECRYPT_KEY }} >> .github/Unity_v2019.x.ulf
         
         # Activate unity
         - name: Activate Unity
-          run: /opt/Unity/Editor/Unity -quit -batchmode -nographics -silent-crashes -logFile -manualLicenseFile .github/Unity_v2018.x.ulf || exit 0
+          run: /opt/Unity/Editor/Unity -quit -batchmode -nographics -silent-crashes -logFile -manualLicenseFile .github/Unity_v2019.x.ulf || exit 0
+        
+        
+        # Create a folder to store apk
+        - name : Create a folder to store apk
+          run: 'mkdir --parents results/artifacts'
+    
+        
+        
         
         # Build Windows and OSX
-        - name: Build Windows Player
-          run: /opt/Unity/Editor/Unity -quit -batchmode -nographics -silent-crashes -noUpm -logFile -projectPath . -buildWindows64Player ./bin-win64/CISample.exe
-        - name: Build OSX Player
-          run: /opt/Unity/Editor/Unity -quit -batchmode -nographics -silent-crashes -noUpm -logFile -projectPath . -buildOSXUniversalPlayer ./bin-osx/CISample.app      
+        - name: Build Android Player
+          run: /opt/Unity/Editor/Unity -quit -batchmode -nographics -silent-crashes -noUpm -logFile -projectPath . -Android ./CISample.apk
+       # - name: Build OSX Player
+        #  run: /opt/Unity/Editor/Unity -quit -batchmode -nographics -silent-crashes -noUpm -logFile -projectPath . -buildOSXUniversalPlayer ./bin-osx/CISample.app      
         
-        - name: Archive Windows Build
+        
+        #- name : create floder next action
+        #  run: 'env | grep GITHUB_ | sort > results/artifacts/ci-env.txt'
+        
+        - name: Archive Android Build
           uses: actions/upload-artifact@v1
           with:
-            name: CISampleWin64Binary
-            path: ./bin-win64
+            name: AndroidApk
+            path: results/artifacts/                  #https://github.com/sravanudutha/ApkRepository/blob/master            #../bin-win64
 
-        - name: Archive Mac Build
-          uses: actions/upload-artifact@v1
-          with:
-            name: CISampleOSXBinary
-            path: ./bin-osx
+      #  - name: Archive Mac Build
+       #   uses: actions/upload-artifact@v1
+        #  with:
+         #   name: CISampleOSXBinary
+          #  path: ./bin-osx
