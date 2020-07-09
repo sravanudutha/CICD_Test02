@@ -2,8 +2,25 @@ name: CI
 on: [push]
 jobs:
   build:
+    name: Build for ${{ matrix.targetPlatform }} on version ${{ matrix.unityVersion }}
     runs-on: ubuntu-latest
     container: gableroux/unity3d:2019.2.4f1
+    
+   
+    strategy:
+      fail-fast: false
+      matrix:
+        projectPath:
+          - CICD_Test02
+        unityVersion:
+          - 2019.2.11f1
+          - 2019.3.0f1
+        targetPlatform:
+         
+          - StandaloneWindows64 # Build a Windows 64-bit standalone.
+         
+          - Android # Build an Android .apk standalone app.
+         
     steps:
         - name: Checkout Project
           uses: actions/checkout@v1
@@ -17,9 +34,20 @@ jobs:
         
         
         # Create a folder to store apk
-        - name : Create a folder to store apk
-          run: 'mkdir --parents results/artifacts'
-    
+      #  - name : Create a folder to store apk
+      #    run: 'mkdir --parents results/artifacts'
+        - name: Unity - Builder
+          uses: actions/checkout@v2
+          with:
+           lfs: true
+        - uses: actions/cache@v1.1.0
+        
+          with:
+            path: ${{ matrix.projectPath }}/Library
+            key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}
+            restore-keys: |
+              Library-${{ matrix.projectPath }}-
+              Library-
         
         
         
