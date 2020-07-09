@@ -43,7 +43,7 @@ jobs:
       #  - name : Create a folder to store apk
       #    run: 'mkdir --parents results/artifacts'
         - name: Unity - Builder
-          uses: actions/checkout@v2
+          uses: actions/checkout@v1
           with:
            lfs: true
            fetch-depth: 1
