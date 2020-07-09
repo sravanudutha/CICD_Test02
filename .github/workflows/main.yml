@@ -1,95 +1,13 @@
-name: CI
+name: Activate Unity
 on: [push]
-env: 
-  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE_DECRYPT_KEY }}
 jobs:
-  build:
-    name: Build for ${{ matrix.targetPlatform }} on version ${{ matrix.unityVersion }}
+  requestActivation:
+    name: Request activation ✔
     runs-on: ubuntu-latest
-   # container: gableroux/unity3d:2019.2.4f1
-    
-   
-    strategy:
-      fail-fast: false
-      matrix:
-        projectPath:
-          - CICD_Test02
-        unityVersion:
-          - 2019.2.11f1
-          - 2019.3.0f1
-        targetPlatform:
-         
-          - StandaloneWindows64 # Build a Windows 64-bit standalone.
-         
-          - Android # Build an Android .apk standalone app.
-         
     steps:
-      #  - name: Checkout Project
-       #   uses: actions/checkout@v1
-
-        - name: Decrypt the license file
-          run: openssl aes-256-cbc -d -in .github/Unity_v2019.x.ulf.enc -k ${{ secrets.UNITY_LICENSE_DECRYPT_KEY }} >> .github/Unity_v2019.x.ulf
-        
-        - name: Activate Unity
-              requestActivation:
-             - name: Request activation ✔
-               uses: webbertakken/unity-activate@v1.2
-               env:
-                 UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-               with:
-                  unityVersion: 2019.2.11f1 
-           
-          
-        
-        # Activate unity
-        - name: Activate Unity
-          run: /opt/Unity/Editor/Unity -quit -batchmode -nographics -silent-crashes -logFile -manualLicenseFile .github/Unity_v2019.x.ulf || exit 0
-        
-        
-        # Create a folder to store apk
-      #  - name : Create a folder to store apk
-      #    run: 'mkdir --parents results/artifacts'
-        - name: Unity - Builder
-          uses: actions/checkout@v2
-          with:
-           lfs: true
-        - uses: actions/cache@v1.1.0
-        
-          with:
-            path: ${{ matrix.projectPath }}/Library
-            key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}
-            restore-keys: |
-              Library-${{ matrix.projectPath }}-
-              Library-
-        
-        
-        
-        # Build Windows and OSX
-          
-        - name: Unity - Builder
-          uses: webbertakken/unity-builder@v1.1
-          with:
-            projectPath: projectPath
-            unityVersion: 2020.2.4f1
-            targetPlatform: Android
-
-       # - name: Build Android Player
-       #   run: /opt/Unity/Editor/Unity -quit -batchmode -nographics -silent-crashes -noUpm -logFile -projectPath . -Android ./bin-android/CISample.apk
-       # - name: Build OSX Player
-        #  run: /opt/Unity/Editor/Unity -quit -batchmode -nographics -silent-crashes -noUpm -logFile -projectPath . -buildOSXUniversalPlayer ./bin-osx/CISample.app      
-        
-        
-        #- name : create floder next action
-        #  run: 'env | grep GITHUB_ | sort > results/artifacts/ci-env.txt'
-        
-        - name: Archive Android Build
-          uses: actions/upload-artifact@v1
-          with:
-            name: AndroidApk
-            path: ./bin-android                 #https://github.com/sravanudutha/ApkRepository/blob/master            #../bin-win64
-
-      #  - name: Archive Mac Build
-       #   uses: actions/upload-artifact@v1
-        #  with:
-         #   name: CISampleOSXBinary
-          #  path: ./bin-osx
+      - name: Activate Unity
+        uses: webbertakken/unity-activate@v1.2
+        env:
+         UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+         unityVersion: 2019.2.11f1
