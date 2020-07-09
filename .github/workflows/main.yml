@@ -1,5 +1,7 @@
 name: CI
 on: [push]
+env: 
+  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE_DECRYPT_KEY }}
 jobs:
   build:
     name: Build for ${{ matrix.targetPlatform }} on version ${{ matrix.unityVersion }}
@@ -27,6 +29,17 @@ jobs:
 
         - name: Decrypt the license file
           run: openssl aes-256-cbc -d -in .github/Unity_v2019.x.ulf.enc -k ${{ secrets.UNITY_LICENSE_DECRYPT_KEY }} >> .github/Unity_v2019.x.ulf
+        
+        - name: Activate Unity
+              requestActivation:
+             - name: Request activation ✔
+               uses: webbertakken/unity-activate@v1.2
+               env:
+                 UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+               with:
+                  unityVersion: 2019.2.11f1 
+           
+          
         
         # Activate unity
         - name: Activate Unity
