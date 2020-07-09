@@ -4,7 +4,7 @@ jobs:
   build:
     name: Build for ${{ matrix.targetPlatform }} on version ${{ matrix.unityVersion }}
     runs-on: ubuntu-latest
-    container: gableroux/unity3d:2019.2.4f1
+   # container: gableroux/unity3d:2019.2.4f1
     
    
     strategy:
