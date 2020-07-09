@@ -3,7 +3,7 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: gableroux/unity3d:2019.3.9f1
+    container: gableroux/unity3d:2019.2.4f1
     steps:
         - name: Checkout Project
           uses: actions/checkout@v1
